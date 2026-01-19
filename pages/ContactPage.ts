@@ -1,7 +1,5 @@
-import { Page, Locator, expect } from '@playwright/test';
+import { Page, Locator } from '@playwright/test';
 import { BasePage } from './BasePage';
-import * as fs from 'fs';
-import * as path from 'path';
 
 export interface ContactFormData {
   name: string;
@@ -45,29 +43,6 @@ export class ContactPage extends BasePage {
     return this.page.locator('#contact-page').getByText(/success! your details have been submitted successfully/i);
   }
 
-  get uploadFileInput(): Locator {
-    return this.page.getByLabel(/attach file|upload file/i).or(this.page.locator('input[type="file"]'));
-  }
-
-  get nameValidationError(): Locator {
-    return this.nameInput;
-  }
-
-  get emailValidationError(): Locator {
-    return this.emailInput;
-  }
-
-  get subjectValidationError(): Locator {
-    return this.subjectInput;
-  }
-
-  get messageValidationError(): Locator {
-    return this.messageTextarea;
-  }
-
-  get fileSelectedIndicator(): Locator {
-    return this.uploadFileInput;
-  }
 
   // ========== ACTIONS ==========
 
@@ -78,68 +53,11 @@ export class ContactPage extends BasePage {
     await this.messageTextarea.fill(formData.message);
   }
 
-  async uploadFile(filePath: string): Promise<void> {
-    await this.uploadFileInput.setInputFiles(filePath);
-  }
-
-  async submitForm(): Promise<void> {
-    await this.submitButton.click();
-  }
-
   async submitFormAndHandleAlert(): Promise<void> {
     this.page.once('dialog', async dialog => {
       await dialog.accept();
     });
     await this.submitButton.click();
-  }
-
-  async submitFormAndVerifySuccess(): Promise<void> {
-    await this.submitFormAndHandleAlert();
-    await expect(this.successMessage).toBeVisible();
-  }
-
-  async submitEmptyForm(): Promise<void> {
-    await this.submitButton.click();
-  }
-
-  async fillAndSubmitForm(formData: ContactFormData): Promise<void> {
-    await this.fillContactForm(formData);
-    await this.submitFormAndVerifySuccess();
-  }
-
-  async fillFormWithInvalidEmail(formData: ContactFormData): Promise<void> {
-    await this.fillContactForm(formData);
-  }
-
-  async fillFormAndUploadFile(formData: ContactFormData, filePath: string): Promise<void> {
-    await this.fillContactForm(formData);
-    await this.uploadFile(filePath);
-  }
-
-  async uploadFileAndSubmitForm(formData: ContactFormData, filePath: string): Promise<void> {
-    await this.fillFormAndUploadFile(formData, filePath);
-    await this.submitFormAndHandleAlert();
-  }
-
-  async submitFormWithFileUpload(
-    formData: ContactFormData,
-    fileContent: string = 'Test file content for upload'
-  ): Promise<void> {
-    const testDataDir = path.join(process.cwd(), 'test-data');
-    if (!fs.existsSync(testDataDir)) {
-      fs.mkdirSync(testDataDir, { recursive: true });
-    }
-
-    const testFilePath = path.join(testDataDir, 'test-file.txt');
-    
-    try {
-      fs.writeFileSync(testFilePath, fileContent);
-      await this.uploadFileAndSubmitForm(formData, testFilePath);
-    } finally {
-      if (fs.existsSync(testFilePath)) {
-        fs.unlinkSync(testFilePath);
-      }
-    }
   }
 }
 

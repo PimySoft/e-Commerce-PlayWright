@@ -24,44 +24,8 @@ export class LoginPage extends BasePage {
     return this.page.getByRole('button', { name: /login/i });
   }
 
-  get signupHeading(): Locator {
-    return this.page.getByRole('heading', { name: /new user signup/i });
-  }
-
-  get signupNameInput(): Locator {
-    return this.page.getByPlaceholder(/name/i).first();
-  }
-
-  get signupEmailInput(): Locator {
-    return this.page.getByPlaceholder(/email address/i).nth(1);
-  }
-
-  get signupButton(): Locator {
-    return this.page.getByRole('button', { name: /signup/i });
-  }
-
   get errorMessage(): Locator {
     return this.page.getByText(/your email or password is incorrect/i);
-  }
-
-  get loggedInAs(): Locator {
-    return this.page.getByText(/logged in as/i);
-  }
-
-  get logoutButton(): Locator {
-    return this.page.getByRole('link', { name: /logout/i });
-  }
-
-  get nameValidationError(): Locator {
-    return this.signupNameInput;
-  }
-
-  get signupEmailValidationError(): Locator {
-    return this.signupEmailInput;
-  }
-
-  get loginEmailValidationError(): Locator {
-    return this.emailInput;
   }
 
   // ========== ACTIONS ==========
@@ -70,16 +34,6 @@ export class LoginPage extends BasePage {
     await this.emailInput.fill(email);
     await this.passwordInput.fill(password);
     await this.loginButton.click();
-  }
-
-  async signup(name: string, email: string): Promise<void> {
-    await this.signupNameInput.fill(name);
-    await this.signupEmailInput.fill(email);
-    await this.signupButton.click();
-  }
-
-  async logout(): Promise<void> {
-    await this.logoutButton.click();
   }
 }
 

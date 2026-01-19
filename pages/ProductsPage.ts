@@ -1,4 +1,4 @@
-import { Page, Locator, expect } from '@playwright/test';
+import { Page, Locator } from '@playwright/test';
 import { BasePage } from './BasePage';
 
 export class ProductsPage extends BasePage {
@@ -12,20 +12,8 @@ export class ProductsPage extends BasePage {
     return this.page.getByPlaceholder(/search product/i);
   }
 
-  get searchButton(): Locator {
-    return this.page.getByRole('button', { name: /search/i });
-  }
-
-  get productsHeading(): Locator {
-    return this.page.getByRole('heading', { name: /all products/i });
-  }
-
   get firstProductCard(): Locator {
     return this.page.getByRole('article').or(this.page.locator('.product-image-wrapper')).first();
-  }
-
-  get viewProductButtons(): Locator {
-    return this.page.getByRole('link', { name: /view product/i });
   }
 
   get addToCartButtons(): Locator {
@@ -60,22 +48,6 @@ export class ProductsPage extends BasePage {
       .first();
   }
 
-  get searchResultsHeading(): Locator {
-    return this.page.getByText(/searched products|search results/i);
-  }
-
-  get availabilityText(): Locator {
-    return this.page.getByText(/availability/i);
-  }
-
-  get conditionText(): Locator {
-    return this.page.getByText(/condition/i);
-  }
-
-  productInCart(productName: string): Locator {
-    return this.page.getByText(productName);
-  }
-
   // ========== ACTIONS ==========
 
   async searchProduct(productName: string): Promise<void> {
@@ -88,7 +60,7 @@ export class ProductsPage extends BasePage {
   async addFirstProductToCart(): Promise<void> {
     await this.handleCookieConsent();
     const productCard = this.firstProductCard;
-    await expect(productCard).toBeVisible();
+    await productCard.waitFor({ state: 'visible' });
     await productCard.hover();
     const addButton = this.addToCartButtons.first();
     await addButton.waitFor({ state: 'visible', timeout: 5000 });
@@ -100,15 +72,11 @@ export class ProductsPage extends BasePage {
     await this.handleCookieConsent();
     await this.firstProductCard.waitFor({ state: 'visible', timeout: 10000 });
     const productCard = this.productCardByName(productName);
-    await expect(productCard).toBeVisible({ timeout: 15000 });
+    await productCard.waitFor({ state: 'visible', timeout: 15000 });
     await productCard.hover();
     const addButton = this.addToCartButtonForProduct(productName);
     await addButton.waitFor({ state: 'visible', timeout: 5000 });
     await addButton.click();
-  }
-
-  async viewFirstProduct(): Promise<void> {
-    await this.viewProductButtons.first().click();
   }
 
   async continueShopping(): Promise<void> {
@@ -117,14 +85,6 @@ export class ProductsPage extends BasePage {
 
   async goToCart(): Promise<void> {
     await this.viewCartButton.click();
-  }
-
-  async addMultipleProductsToCart(productNames: string[]): Promise<void> {
-    for (const productName of productNames) {
-      await this.goto('/products');
-      await this.addProductToCartByName(productName);
-      await this.continueShopping();
-    }
   }
 }
 

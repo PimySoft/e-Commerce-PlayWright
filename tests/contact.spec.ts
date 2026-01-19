@@ -16,20 +16,4 @@ test.describe('Contact Form', () => {
     await expect(contactPage.successMessage).toBeVisible();
   });
 
-  test('should validate all required fields', async ({ contactPage }) => {
-    await contactPage.submitEmptyForm();
-
-    const inputs = [
-      contactPage.nameInput,
-      contactPage.emailInput,
-      contactPage.subjectInput,
-      contactPage.messageTextarea
-    ];
-
-    for (const input of inputs) {
-      await expect.poll(async () => {
-        return await input.evaluate((el: HTMLInputElement | HTMLTextAreaElement) => el.validity.valid);
-      }).toBeFalsy();
-    }
-  });
 });

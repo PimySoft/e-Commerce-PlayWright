@@ -37,15 +37,6 @@ export class CartPage extends BasePage {
       .first();
   }
 
-  productPrice(productName: string): Locator {
-    return this.cartItemRow(productName).getByText(/rs\.|₹|\$|€|£/i).first();
-  }
-
-  productTotal(productName: string): Locator {
-    const row = this.cartItemRow(productName);
-    return row.getByText(/rs\.|₹|\$|€|£/i).nth(1);
-  }
-
   // ========== ACTIONS ==========
 
   async removeProduct(productName: string): Promise<void> {
@@ -63,26 +54,6 @@ export class CartPage extends BasePage {
   async removeProductAndWait(productName: string): Promise<void> {
     await this.removeProduct(productName);
     await expect(this.cartItemRow(productName)).not.toBeVisible();
-  }
-
-  async getProductPriceValue(productName: string): Promise<number> {
-    const priceText = await this.productPrice(productName).textContent();
-    return parseFloat(priceText?.replace(/[^0-9.]/g, '') || '0');
-  }
-
-  async getProductTotalValue(productName: string): Promise<number> {
-    const totalText = await this.productTotal(productName).textContent();
-    return parseFloat(totalText?.replace(/[^0-9.]/g, '') || '0');
-  }
-
-  async verifyTotalPriceCalculation(productName: string, expectedQuantity: number): Promise<void> {
-    const price = await this.getProductPriceValue(productName);
-    const total = await this.getProductTotalValue(productName);
-    expect(total).toBe(price * expectedQuantity);
-  }
-
-  async verifyCheckoutPageLoaded(): Promise<void> {
-    await this.page.getByText(/checkout/i).waitFor({ state: 'visible' });
   }
 }
 

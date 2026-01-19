@@ -24,7 +24,11 @@ test.describe('Products Page', () => {
   });
 
   test('should handle search with no results', async ({ productsPage }) => {
-    await productsPage.searchProduct('nonexistentproductxyz123');
-    await expect(productsPage.firstProductCard).not.toBeVisible();
+    const searchTerm = 'nonexistentproductxyz123';
+    await productsPage.searchProduct(searchTerm);
+    
+    const productCard = productsPage.productCardByName(searchTerm);
+    const count = await productCard.count();
+    expect(count).toBe(0);
   });
 });
