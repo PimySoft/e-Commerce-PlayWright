@@ -24,11 +24,6 @@ export class CartPage extends BasePage {
     return this.page.getByRole('row').filter({ hasText: new RegExp(productName, 'i') }).first();
   }
 
-  quantityInput(productName: string): Locator {
-    const row = this.cartItemRow(productName);
-    return row.getByRole('cell').nth(3).getByRole('button');
-  }
-
   removeButton(productName: string): Locator {
     const row = this.cartItemRow(productName);
     return row.getByRole('link', { name: /remove|delete/i })
@@ -45,10 +40,6 @@ export class CartPage extends BasePage {
 
   async proceedToCheckout(): Promise<void> {
     await this.proceedToCheckoutButton.click();
-  }
-
-  async getProductQuantity(productName: string): Promise<string> {
-    return await this.quantityInput(productName).textContent() || '0';
   }
 
   async removeProductAndWait(productName: string): Promise<void> {

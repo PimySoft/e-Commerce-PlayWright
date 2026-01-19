@@ -156,8 +156,13 @@ Add `PERCY_TOKEN` as secret environment variable. Example (GitHub Actions):
 - `retries: process.env.CI ? 2 : 0` - Retries on CI only
 - `workers: process.env.CI ? 1 : undefined` - Sequential on CI, parallel locally
 
+**GitHub Actions Workflow:**
+- **Demo workflow included** - `.github/workflows/playwright.yml` demonstrates CI/CD setup
+- Runs tests on push/PR to main/develop branches
+- Includes caching, artifact uploads, and proper CI configuration
+- **Note:** This is a demonstration workflow. Customize for your production needs.
+
 **Future Plans:**
-- GitHub Actions workflow for automated testing on push/PR
 - Matrix builds for cross-browser testing (Chrome, Firefox, Safari, Edge)
 - Test result reporting and notifications
 - Integration with project management tools

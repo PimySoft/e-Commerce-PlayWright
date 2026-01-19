@@ -15,8 +15,8 @@ type TestFixtures = {
 
 export const test = base.extend<TestFixtures>({
   page: async ({ page }, use) => {
-    // Professional Approach #1: Set localStorage before navigation to bypass popup
-    // This is more reliable than clicking the popup after page loads
+    // Set localStorage before navigation to bypass popup
+    // This is more reliable than clicking the popup after pge loads
     await page.addInitScript(() => {
       // Set consent in localStorage before page loads
       window.localStorage.setItem('fc_cookie_consent', 'accepted');

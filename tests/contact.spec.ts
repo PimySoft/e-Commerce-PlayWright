@@ -1,14 +1,9 @@
 import { test, expect } from './fixtures';
-import { ContactFormData } from '../pages/ContactPage';
+import { TestDataFactory } from '../test-data/TestDataFactory';
 
 test.describe('Contact Form', () => {
-  test('should submit contact form successfully', async ({ contactPage }) => {
-    const formData: ContactFormData = {
-      name: 'John Doe',
-      email: 'john.doe@example.com',
-      subject: 'Test Inquiry',
-      message: 'This is a test message for contact form submission.',
-    };
+  test('should submit contact form with valid data and show success message', async ({ contactPage }) => {
+    const formData = TestDataFactory.createContactFormData();
 
     await contactPage.fillContactForm(formData);
     await contactPage.submitFormAndHandleAlert();
