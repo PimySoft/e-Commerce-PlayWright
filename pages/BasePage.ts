@@ -17,11 +17,20 @@ export class BasePage {
     return this.page.getByRole('button', { name: /accept|agree|ok|allow|consent/i });
   }
 
+  get googleSurveyPopup(): Locator {
+    return this.page.locator('[role="dialog"]').filter({ hasText: /answer questions to support/i });
+  }
+
+  get googleSurveyDoneButton(): Locator {
+    return this.page.getByRole('button', { name: /done/i });
+  }
+
   // ========== ACTIONS ==========
 
   async goto(path: string = ''): Promise<void> {
     await this.page.goto(path);
     await this.handleCookieConsent();
+    await this.handleGoogleSurveyPopup();
   }
 
   async handleCookieConsent(): Promise<void> {
@@ -36,6 +45,21 @@ export class BasePage {
     if (buttonCount > 0) {
       await this.cookieConsentAcceptButton.first().click();
       await this.consentDialog.waitFor({ state: 'hidden', timeout: 2000 }).catch(() => {});
+    }
+  }
+
+  async handleGoogleSurveyPopup(): Promise<void> {
+    const popupCount = await this.googleSurveyPopup.count();
+    
+    if (popupCount === 0) {
+      return;
+    }
+
+    const doneButtonCount = await this.googleSurveyDoneButton.count();
+    
+    if (doneButtonCount > 0) {
+      await this.googleSurveyDoneButton.first().click({ timeout: 2000 }).catch(() => {});
+      await this.googleSurveyPopup.waitFor({ state: 'hidden', timeout: 2000 }).catch(() => {});
     }
   }
 }

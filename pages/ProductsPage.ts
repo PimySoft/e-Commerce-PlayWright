@@ -59,6 +59,7 @@ export class ProductsPage extends BasePage {
 
   async addFirstProductToCart(): Promise<void> {
     await this.handleCookieConsent();
+    await this.handleGoogleSurveyPopup();
     await this.firstProductCard.hover();
     await this.addToCartButtons.first().click();
   }
