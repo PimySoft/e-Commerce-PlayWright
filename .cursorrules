@@ -129,6 +129,28 @@
   });
   ```
 
+## 7. Always Use Await, Never Silently Catch Errors
+- **ALWAYS** use `await` for async operations
+- **NEVER** use `.catch(() => {})` to silently swallow errors
+- **ENSURE** operations complete before proceeding to next steps
+- **BENEFITS**: Better error visibility, improved CI reliability, ensures operations complete
+- Example:
+  ```typescript
+  // ✅ CORRECT - Using await
+  async navigateToProducts(): Promise<void> {
+    await this.productsLink.click();
+    await this.handleCookieConsent();
+    await this.page.waitForURL('**/products**');
+  }
+  
+  // ❌ WRONG - Silently catching errors
+  async navigateToProducts(): Promise<void> {
+    await this.productsLink.click();
+    this.handleCookieConsent().catch(() => {});
+    await this.page.waitForURL('**/products**');
+  }
+  ```
+
 ## Additional Best Practices
 - Use TypeScript for type safety
 - Keep page objects focused and single-responsibility

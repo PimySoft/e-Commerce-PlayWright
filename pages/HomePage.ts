@@ -32,14 +32,14 @@ export class HomePage extends BasePage {
 
   async navigateToProducts(): Promise<void> {
     await this.productsLink.click();
-    this.handleCookieConsent().catch(() => {});
+    await this.handleCookieConsent();
     await this.page.waitForURL('**/products**', { timeout: 30000 });
     await this.handleCookieConsent();
   }
 
   async navigateToCart(): Promise<void> {
     await this.cartLink.click();
-    this.handleCookieConsent().catch(() => {});
+    await this.handleCookieConsent();
     await this.page.waitForURL('**/view_cart**', { timeout: 30000 });
     await this.handleCookieConsent();
   }

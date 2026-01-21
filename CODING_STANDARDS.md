@@ -324,6 +324,56 @@ test('should login with valid credentials', async ({ page }) => {
 - Use `use()` callback for proper cleanup
 - Share common setup across fixtures when possible
 
+## 7. Always Use Await, Never Silently Catch Errors
+
+**Rule**: Always use `await` for async operations. Never use `.catch(() => {})` to silently swallow errors. Ensure operations complete before proceeding to the next step.
+
+**Rationale**: Silently catching errors with `.catch(() => {})` hides failures and can cause timing issues in CI environments. Using `await` ensures:
+- Operations complete before proceeding
+- Errors are properly surfaced for debugging
+- Better reliability in CI/CD environments
+- Proper sequencing of async operations
+
+### ✅ Correct
+```typescript
+async navigateToProducts(): Promise<void> {
+  await this.productsLink.click();
+  await this.handleCookieConsent();
+  await this.page.waitForURL('**/products**');
+}
+
+async handleGoogleSurveyPopup(): Promise<void> {
+  const popup = getGoogleSurveyPopup(page);
+  const closeButton = getGoogleSurveyCloseButton(page);
+  const closeCount = await closeButton.count();
+  if (closeCount > 0) {
+    await closeButton.first().click({ timeout: 5000 });
+    await popup.waitFor({ state: 'hidden', timeout: 5000 });
+  }
+}
+```
+
+### ❌ Incorrect
+```typescript
+async navigateToProducts(): Promise<void> {
+  await this.productsLink.click();
+  this.handleCookieConsent().catch(() => {});
+  await this.page.waitForURL('**/products**');
+}
+
+async handleGoogleSurveyPopup(): Promise<void> {
+  const closeButton = getGoogleSurveyCloseButton(page);
+  await closeButton.first().click({ timeout: 2000 }).catch(() => {});
+  // No wait for popup to be hidden - may cause timing issues
+}
+```
+
+### Key Points:
+- Always `await` async operations to ensure they complete
+- Never use `.catch(() => {})` to silently ignore errors
+- Wait for operations to complete before proceeding (e.g., wait for popup to be hidden after clicking close)
+- Proper error handling improves CI reliability and debugging
+
 ## Summary Checklist
 
 When writing or reviewing code, ensure:
@@ -336,4 +386,5 @@ When writing or reviewing code, ensure:
 - [ ] Tests use fixtures instead of instantiating page objects in each test
 - [ ] TypeScript types are properly used for fixtures and page objects
 - [ ] All page objects extend `BasePage` with consistent constructor pattern
+- [ ] All async operations use `await` (no silent error catching with `.catch(() => {})`)
 
