@@ -53,22 +53,29 @@ export class ProductsPage extends BasePage {
   async searchProduct(productName: string): Promise<void> {
     await this.searchInput.fill(productName);
     await this.searchInput.press('Enter');
+    await this.page.waitForLoadState('domcontentloaded');
     await this.handleCookieConsent();
   }
 
   async addFirstProductToCart(): Promise<void> {
     await this.handleCookieConsent();
-    await this.page.waitForURL(/products/i, { timeout: 10000 }).catch(() => {});
-    await this.firstProductCard.waitFor({ state: 'visible', timeout: 20000 });
-    await this.firstProductCard.hover();
-    await this.addToCartButtons.first().click();
+    const productCard = this.firstProductCard;
+    await productCard.waitFor({ state: 'visible' });
+    await productCard.hover();
+    const addButton = this.addToCartButtons.first();
+    await addButton.waitFor({ state: 'visible', timeout: 5000 });
+    await addButton.click();
   }
 
   async addProductToCartByName(productName: string): Promise<void> {
     await this.goto('/products');
+    await this.firstProductCard.waitFor({ state: 'visible', timeout: 10000 });
     const productCard = this.productCardByName(productName);
+    await productCard.waitFor({ state: 'visible', timeout: 15000 });
     await productCard.hover();
-    await this.addToCartButtonForProduct(productName).click();
+    const addButton = this.addToCartButtonForProduct(productName);
+    await addButton.waitFor({ state: 'visible', timeout: 5000 });
+    await addButton.click();
   }
 
   async continueShopping(): Promise<void> {
@@ -79,4 +86,3 @@ export class ProductsPage extends BasePage {
     await this.viewCartButton.click();
   }
 }
-

@@ -3,9 +3,21 @@ import { Page, Locator } from '@playwright/test';
 export class BasePage {
   constructor(protected readonly page: Page) {}
 
+  // ========== SELECTORS ==========
+
   get pageInstance(): Page {
     return this.page;
   }
+
+  get consentDialog(): Locator {
+    return this.page.locator('.fc-consent-root');
+  }
+
+  get cookieConsentAcceptButton(): Locator {
+    return this.page.getByRole('button', { name: /accept|agree|ok|allow|consent/i });
+  }
+
+  // ========== ACTIONS ==========
 
   async goto(path: string = ''): Promise<void> {
     await this.page.goto(path);
@@ -13,20 +25,17 @@ export class BasePage {
   }
 
   async handleCookieConsent(): Promise<void> {
-    const consentDialog = this.page.locator('.fc-consent-root');
-    const dialogCount = await consentDialog.count();
+    const dialogCount = await this.consentDialog.count();
     
     if (dialogCount === 0) {
       return;
     }
 
-    const acceptButton = this.page.getByRole('button', { name: /accept|agree|ok|allow|consent/i });
-    const buttonCount = await acceptButton.count();
+    const buttonCount = await this.cookieConsentAcceptButton.count();
     
     if (buttonCount > 0) {
-      await acceptButton.first().click();
-      await consentDialog.waitFor({ state: 'hidden', timeout: 2000 }).catch(() => {});
+      await this.cookieConsentAcceptButton.first().click();
+      await this.consentDialog.waitFor({ state: 'hidden', timeout: 2000 }).catch(() => {});
     }
   }
 }
-

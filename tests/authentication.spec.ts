@@ -16,8 +16,8 @@ test.describe('User Authentication', () => {
     });
 
     await test.step('Verify error message is displayed', async () => {
-      await expect(loginPage.errorMessage).toBeVisible();
-    });
+    await expect(loginPage.errorMessage).toBeVisible();
+  });
   });
 
   test('should reject invalid email format in login form', async ({ loginPage }) => {

@@ -60,4 +60,3 @@ export class ContactPage extends BasePage {
     await this.submitButton.click();
   }
 }
-
