@@ -158,7 +158,9 @@ Add `PERCY_TOKEN` as secret environment variable. Example (GitHub Actions):
 
 **GitHub Actions Workflow:**
 - **Demo workflow included** - `.github/workflows/playwright.yml` demonstrates CI/CD setup
-- Runs tests on push/PR to main/develop branches
+- Runs automatically on push/PR to main/develop branches
+- Uses official Playwright GitHub Action for reliable browser installation
+- Runs Chrome tests in CI (Safari/WebKit on Linux is not well supported)
 - Includes caching, artifact uploads, and proper CI configuration
 - **Note:** This is a demonstration workflow. Customize for your production needs.
 
