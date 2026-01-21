@@ -1,4 +1,4 @@
-import { test as base, Page } from '@playwright/test';
+import { test as base, Page, Locator } from '@playwright/test';
 import { HomePage } from '../pages/HomePage';
 import { ProductsPage } from '../pages/ProductsPage';
 import { CartPage } from '../pages/CartPage';
@@ -13,6 +13,24 @@ type TestFixtures = {
   contactPage: ContactPage;
 };
 
+// ========== SELECTORS ==========
+
+function getGoogleSurveyPopup(page: Page): Locator {
+  return page.locator('[role="dialog"]').filter({ hasText: /answer questions to support/i });
+}
+
+function getGoogleSurveyCloseButton(page: Page): Locator {
+  return page.getByRole('button', { name: /close/i })
+    .or(page.locator('button[aria-label*="close" i]'))
+    .or(page.locator('button[aria-label*="Close" i]'));
+}
+
+function getGoogleSurveyDoneButton(page: Page): Locator {
+  return page.getByRole('button', { name: /done/i });
+}
+
+// ========== ACTIONS ==========
+
 export const test = base.extend<TestFixtures>({
   page: async ({ page }, use) => {
     // Set localStorage before navigation to bypass popup
@@ -24,6 +42,25 @@ export const test = base.extend<TestFixtures>({
       // Also try common cookie consent library storage keys
       window.localStorage.setItem('cookieconsent_status', 'allow');
     });
+
+    // Register handler for Google survey popup - automatically dismisses when it appears
+    await page.addLocatorHandler(
+      getGoogleSurveyPopup(page),
+      async () => {
+        const closeButton = getGoogleSurveyCloseButton(page);
+        const closeCount = await closeButton.count();
+        if (closeCount > 0) {
+          await closeButton.first().click({ timeout: 2000 }).catch(() => {});
+          return;
+        }
+
+        const doneButton = getGoogleSurveyDoneButton(page);
+        const doneCount = await doneButton.count();
+        if (doneCount > 0) {
+          await doneButton.first().click({ timeout: 2000 }).catch(() => {});
+        }
+      }
+    );
     
     await use(page);
   },

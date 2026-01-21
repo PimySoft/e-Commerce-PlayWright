@@ -33,18 +33,14 @@ export class HomePage extends BasePage {
   async navigateToProducts(): Promise<void> {
     await this.productsLink.click();
     this.handleCookieConsent().catch(() => {});
-    this.handleGoogleSurveyPopup().catch(() => {});
     await this.page.waitForURL('**/products**', { timeout: 30000 });
     await this.handleCookieConsent();
-    await this.handleGoogleSurveyPopup();
   }
 
   async navigateToCart(): Promise<void> {
     await this.cartLink.click();
     this.handleCookieConsent().catch(() => {});
-    this.handleGoogleSurveyPopup().catch(() => {});
     await this.page.waitForURL('**/view_cart**', { timeout: 30000 });
     await this.handleCookieConsent();
-    await this.handleGoogleSurveyPopup();
   }
 }
