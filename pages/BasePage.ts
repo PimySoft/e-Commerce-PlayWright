@@ -21,6 +21,12 @@ export class BasePage {
     return this.page.locator('[role="dialog"]').filter({ hasText: /answer questions to support/i });
   }
 
+  get googleSurveyCloseButton(): Locator {
+    return this.page.getByRole('button', { name: /close/i })
+      .or(this.page.locator('button[aria-label*="close" i]'))
+      .or(this.page.locator('button[aria-label*="Close" i]'));
+  }
+
   get googleSurveyDoneButton(): Locator {
     return this.page.getByRole('button', { name: /done/i });
   }
@@ -52,6 +58,14 @@ export class BasePage {
     const popupCount = await this.googleSurveyPopup.count();
     
     if (popupCount === 0) {
+      return;
+    }
+
+    const closeButtonCount = await this.googleSurveyCloseButton.count();
+    
+    if (closeButtonCount > 0) {
+      await this.googleSurveyCloseButton.first().click({ timeout: 2000 }).catch(() => {});
+      await this.googleSurveyPopup.waitFor({ state: 'hidden', timeout: 2000 }).catch(() => {});
       return;
     }
 
