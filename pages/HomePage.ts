@@ -32,11 +32,13 @@ export class HomePage extends BasePage {
 
   async navigateToProducts(): Promise<void> {
     await this.productsLink.click();
-    await this.page.waitForLoadState('domcontentloaded');
+    await this.page.waitForURL('**/products**');
+    await this.handleCookieConsent();
   }
 
   async navigateToCart(): Promise<void> {
     await this.cartLink.click();
-    await this.page.waitForLoadState('domcontentloaded');
+    await this.page.waitForURL('**/view_cart**');
+    await this.handleCookieConsent();
   }
 }
