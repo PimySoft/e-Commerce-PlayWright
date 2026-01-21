@@ -51,16 +51,16 @@ export const test = base.extend<TestFixtures>({
         const closeButton = getGoogleSurveyCloseButton(page);
         const closeCount = await closeButton.count();
         if (closeCount > 0) {
-          await closeButton.first().click({ timeout: 5000 });
-          await popup.waitFor({ state: 'hidden', timeout: 5000 });
+          await closeButton.first().click();
+          await popup.waitFor({ state: 'hidden' });
           return;
         }
 
         const doneButton = getGoogleSurveyDoneButton(page);
         const doneCount = await doneButton.count();
         if (doneCount > 0) {
-          await doneButton.first().click({ timeout: 5000 });
-          await popup.waitFor({ state: 'hidden', timeout: 5000 });
+          await doneButton.first().click();
+          await popup.waitFor({ state: 'hidden' });
         }
       }
     );
