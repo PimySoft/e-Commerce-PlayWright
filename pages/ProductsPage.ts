@@ -58,12 +58,10 @@ export class ProductsPage extends BasePage {
 
   async addFirstProductToCart(): Promise<void> {
     await this.handleCookieConsent();
-    const productCard = this.firstProductCard;
-    await productCard.waitFor({ state: 'visible' });
-    await productCard.hover();
-    const addButton = this.addToCartButtons.first();
-    await addButton.waitFor({ state: 'visible', timeout: 5000 });
-    await addButton.click();
+    await this.page.waitForURL(/products/i, { timeout: 10000 }).catch(() => {});
+    await this.firstProductCard.waitFor({ state: 'visible', timeout: 20000 });
+    await this.firstProductCard.hover();
+    await this.addToCartButtons.first().click();
   }
 
   async addProductToCartByName(productName: string): Promise<void> {
